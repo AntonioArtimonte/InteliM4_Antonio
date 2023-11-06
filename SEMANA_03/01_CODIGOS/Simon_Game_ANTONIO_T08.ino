@@ -10,6 +10,8 @@
 
 int fase = 1; // Váriavel relacionada a fase do jogo
 int status = 0; // Váriavel relacionada ao status dos leds dentro das fases (ORDEM)
+int buttonPresses[4] = {0};  
+int currentIndex = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -38,6 +40,24 @@ void loop() {
     delay(300);
     status = 1;
     Serial.println(status);
+  }
+
+
+  if (digitalRead(buttonB) == LOW) {
+    storeButtonPress(1);
+    delay(200);  // Debounce delay
+  }
+  if (digitalRead(buttonG) == LOW) {
+    storeButtonPress(2);
+    delay(200);  // Debounce delay
+  }
+  if (digitalRead(buttonY) == LOW) {
+    storeButtonPress(3);
+    delay(200);  // Debounce delay
+  }
+    if (digitalRead(buttonR) == LOW) {
+    storeButtonPress(4);
+    delay(200);  // Debounce delay
   }
 
 
@@ -437,4 +457,24 @@ if (fase == 4 && status == 4) {
     status = 0;
   }
 
+}
+
+
+void storeButtonPress(int button) {
+  buttonPresses[currentIndex] = button;
+  currentIndex++;
+  if (currentIndex == 4) {
+    // If the buffer is full, reset currentIndex to 0
+    currentIndex = 0;
+  }
+
+  // Print the current state of the buffer
+  Serial.print("Buffer = {");
+  for (int i = 0; i < 4; i++) {
+    Serial.print(buttonPresses[i]);
+    if (i < 3) {
+      Serial.print(", ");
+    }
+  }
+  Serial.println("}");
 }

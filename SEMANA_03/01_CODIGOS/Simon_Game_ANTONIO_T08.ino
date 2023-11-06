@@ -1,480 +1,205 @@
-#define buttonStart 22
-#define buttonB 23
-#define buttonG 16
-#define buttonY 18
-#define buttonR 19
-#define ledB 32
-#define ledG 33
-#define ledY 25
-#define ledR 26
 
-int fase = 1; // Váriavel relacionada a fase do jogo
-int status = 0; // Váriavel relacionada ao status dos leds dentro das fases (ORDEM)
-int buttonPresses[4] = {0};  
-int currentIndex = 0;
+
+const int MAX_LEVEL  = 100;
+int sequence[MAX_LEVEL];
+int your_sequence[MAX_LEVEL];
+int level  = 1;
+
+int velocity = 1000;
 
 void setup() {
-  Serial.begin(9600);
-  pinMode(ledB, OUTPUT); // Declara leds como OUTPUTS
-  pinMode(ledG, OUTPUT);
-  pinMode(ledY, OUTPUT);
-  pinMode(ledR, OUTPUT);  
-  pinMode(buttonStart, INPUT_PULLUP); // Declara botões como INPUTS
-  pinMode(buttonB, INPUT_PULLUP);
-  pinMode(buttonG, INPUT_PULLUP);
-  pinMode(buttonY, INPUT_PULLUP);
-  pinMode(buttonR, INPUT_PULLUP);
-  digitalWrite(ledB, LOW); // Desliga todos os leds
-  digitalWrite(ledG, LOW);
-  digitalWrite(ledY, LOW);
-  digitalWrite(ledR, LOW);
-}
+Serial.begin(9600);
+pinMode(23, INPUT_PULLUP);
+pinMode(4,  INPUT_PULLUP);
+pinMode(15, INPUT_PULLUP);
+pinMode(13, INPUT_PULLUP);
 
-void loop() {
-  // IF para iniciar o jogo
-  if (digitalRead(buttonStart) == LOW && fase == 1) {
-    delay(1000);
-    digitalWrite(ledB, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    delay(300);
-    status = 1;
-    Serial.println(status);
-  }
+pinMode(22, INPUT_PULLUP);
 
+pinMode(16, OUTPUT);
+pinMode(17,  OUTPUT);
+pinMode(18, OUTPUT);
+pinMode(19, OUTPUT);
 
-  if (digitalRead(buttonB) == LOW) {
-    storeButtonPress(1);
-    delay(200);  // Debounce delay
-  }
-  if (digitalRead(buttonG) == LOW) {
-    storeButtonPress(2);
-    delay(200);  // Debounce delay
-  }
-  if (digitalRead(buttonY) == LOW) {
-    storeButtonPress(3);
-    delay(200);  // Debounce delay
-  }
-    if (digitalRead(buttonR) == LOW) {
-    storeButtonPress(4);
-    delay(200);  // Debounce delay
-  }
-
-
-  // IF para checar se o botão pressionado foi o correto de acordo com a fase
-  if (digitalRead(buttonB) == LOW && fase == 1 && status == 1) {
-    digitalWrite(ledB, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    delay(1000);
-    digitalWrite(ledB, HIGH);
-    digitalWrite(ledG, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    digitalWrite(ledG, LOW);
-    digitalWrite(ledB, HIGH);
-    digitalWrite(ledG, HIGH);
-    digitalWrite(ledY, HIGH);
-    digitalWrite(ledR, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    digitalWrite(ledG, LOW);
-    digitalWrite(ledY, LOW);
-    digitalWrite(ledR, LOW);
-    delay(1000);
-    digitalWrite(ledB, HIGH);
-    digitalWrite(ledG, HIGH);
-    digitalWrite(ledY, HIGH);
-    digitalWrite(ledR, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    digitalWrite(ledG, LOW);
-    digitalWrite(ledY, LOW);
-    digitalWrite(ledR, LOW);
-    status = 0;
-    fase = 2;
-  }
-
-  // Se foi o botão errado, reiniciar o jogo
-  if ((digitalRead(buttonG) == LOW || digitalRead(buttonY) == LOW || digitalRead(buttonR) == LOW) && fase == 1 && status == 1) {
-    digitalWrite(ledB, HIGH);
-    digitalWrite(ledG, HIGH);
-    digitalWrite(ledY, HIGH);
-    digitalWrite(ledR, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    digitalWrite(ledG, LOW);
-    digitalWrite(ledY, LOW);
-    digitalWrite(ledR, LOW);
-    status = 0;
-    fase = 1;
-  }
-
-
-  // IF para iniciar a segunda fase
-
-  if(fase == 2 && status == 0) {
-    delay(1500);
-    digitalWrite(ledB, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    delay(300);
-    digitalWrite(ledG, HIGH);
-    delay(300);
-    digitalWrite(ledG, LOW);
-    status = 1;
-  }
-
-  // IF para checar se o botão pressionado foi o correto de acordo com a fase
-
-  if(digitalRead(buttonB) == LOW && fase == 2 && status == 1) {
-    digitalWrite(ledB, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    status = 2;
-  }
-
-    // Se foi o botão errado, reiniciar o jogo
-
-  if ((digitalRead(buttonG) == LOW || digitalRead(buttonY) == LOW || digitalRead(buttonR) == LOW) && fase == 2 && status == 1) {
-    digitalWrite(ledB, HIGH);
-    digitalWrite(ledG, HIGH);
-    digitalWrite(ledY, HIGH);
-    digitalWrite(ledR, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    digitalWrite(ledG, LOW);
-    digitalWrite(ledY, LOW);
-    digitalWrite(ledR, LOW);
-    status = 0;
-    fase = 1;
-  }
-
-  // IF para checar se o botão pressionado foi o correto de acordo com a fase
-
-  if(digitalRead(buttonG) == LOW && fase == 2 && status == 2) {
-    digitalWrite(ledG, HIGH);
-    delay(300);
-    digitalWrite(ledG, LOW);
-    status = 0;
-    fase = 3;
-    delay(1000);
-    digitalWrite(ledB, HIGH);
-    digitalWrite(ledG, HIGH);
-    digitalWrite(ledY, HIGH);
-    digitalWrite(ledR, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    digitalWrite(ledG, LOW);
-    digitalWrite(ledY, LOW);
-    digitalWrite(ledR, LOW);
-    delay(1000);
-    digitalWrite(ledB, HIGH);
-    digitalWrite(ledG, HIGH);
-    digitalWrite(ledY, HIGH);
-    digitalWrite(ledR, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    digitalWrite(ledG, LOW);
-    digitalWrite(ledY, LOW);
-    digitalWrite(ledR, LOW);
-  }
-
-
-    // Se foi o botão errado, reiniciar o jogo
-
-  if ((digitalRead(buttonB) == LOW || digitalRead(buttonY) == LOW || digitalRead(buttonR) == LOW) && fase == 2 && status == 2) {
-    digitalWrite(ledB, HIGH);
-    digitalWrite(ledG, HIGH);
-    digitalWrite(ledY, HIGH);
-    digitalWrite(ledR, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    digitalWrite(ledG, LOW);
-    digitalWrite(ledY, LOW);
-    digitalWrite(ledR, LOW);
-    status = 0;
-    fase = 1;
-  }
-
-  // IF para iniciar a fase 3
-  if(fase == 3 && status == 0) {
-    delay(1000);
-    digitalWrite(ledB, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    delay(300);
-    digitalWrite(ledG, HIGH);
-    delay(300);
-    digitalWrite(ledG, LOW);
-    delay(300);
-    digitalWrite(ledY, HIGH);
-    delay(300);
-    digitalWrite(ledY, LOW);
-    status = 1;
-  }
-    // IF para checar se o botão pressionado foi o correto de acordo com a fase
-
-  if(digitalRead(buttonB) == LOW && fase == 3 && status == 1) {
-    digitalWrite(ledB, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    status = 2;
-  }
-
-  // Se foi o botão errado, reiniciar o jogo
-
-    if ((digitalRead(buttonG) == LOW || digitalRead(buttonY) == LOW || digitalRead(buttonR) == LOW) && fase == 3 && status == 1) {
-    digitalWrite(ledB, HIGH);
-    digitalWrite(ledG, HIGH);
-    digitalWrite(ledY, HIGH);
-    digitalWrite(ledR, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    digitalWrite(ledG, LOW);
-    digitalWrite(ledY, LOW);
-    digitalWrite(ledR, LOW);
-    status = 0;
-    fase = 1;
-  }
-  // IF para checar se o botão pressionado foi o correto de acordo com a fase
-
-  if(digitalRead(buttonG) == LOW && fase == 3 && status == 2) {
-    digitalWrite(ledG, HIGH);
-    delay(300);
-    digitalWrite(ledG, LOW);
-    status = 3;
-  }
-    // Se foi o botão errado, reiniciar o jogo
-
-    if ((digitalRead(buttonB) == LOW || digitalRead(buttonY) == LOW || digitalRead(buttonR) == LOW) && fase == 3 && status == 2) {
-    digitalWrite(ledB, HIGH);
-    digitalWrite(ledG, HIGH);
-    digitalWrite(ledY, HIGH);
-    digitalWrite(ledR, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    digitalWrite(ledG, LOW);
-    digitalWrite(ledY, LOW);
-    digitalWrite(ledR, LOW);
-    status = 0;
-    fase = 1;
-  }
-
-  // IF para checar se o botão pressionado foi o correto de acordo com a fase
-
-  if(digitalRead(buttonY) == LOW && fase == 3 && status == 3) {
-    digitalWrite(ledY, HIGH);
-    delay(300);
-    digitalWrite(ledY, LOW);
-    delay(1000);
-    digitalWrite(ledB, HIGH);
-    digitalWrite(ledG, HIGH);
-    digitalWrite(ledY, HIGH);
-    digitalWrite(ledR, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    digitalWrite(ledG, LOW);
-    digitalWrite(ledY, LOW);
-    digitalWrite(ledR, LOW);
-    delay(1000);
-    digitalWrite(ledB, HIGH);
-    digitalWrite(ledG, HIGH);
-    digitalWrite(ledY, HIGH);
-    digitalWrite(ledR, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    digitalWrite(ledG, LOW);
-    digitalWrite(ledY, LOW);
-    digitalWrite(ledR, LOW);
-    fase = 4;
-    status = 4;
-  }
-
-    // Se foi o botão errado, reiniciar o jogo
-
-    if ((digitalRead(buttonB) == LOW || digitalRead(buttonG) == LOW || digitalRead(buttonR) == LOW) && fase == 3 && status == 3) {
-    digitalWrite(ledB, HIGH);
-    digitalWrite(ledG, HIGH);
-    digitalWrite(ledY, HIGH);
-    digitalWrite(ledR, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    digitalWrite(ledG, LOW);
-    digitalWrite(ledY, LOW);
-    digitalWrite(ledR, LOW);
-    status = 0;
-    fase = 1;
-  }
- // fase 4
-
-// IF para iniciar a fase 4
-if (fase == 4 && status == 4) {
-    delay(1000);
-    digitalWrite(ledB, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    delay(300);
-    digitalWrite(ledG, HIGH);
-    delay(300);
-    digitalWrite(ledG, LOW);
-    delay(300);
-    digitalWrite(ledY, HIGH);
-    delay(300);
-    digitalWrite(ledY, LOW);
-    delay(300);
-    digitalWrite(ledR, HIGH);
-    delay(300);
-    digitalWrite(ledR, LOW);
-  status = 1;
-}
-  // IF para checar se o botão pressionado foi o correto de acordo com a fase
-
-  if(digitalRead(buttonB) == LOW && fase == 4 && status == 1) {
-    digitalWrite(ledB, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    status = 2;
-  }
-
-
-  // Se foi o botão errado, reiniciar o jogo
-
-    if ((digitalRead(buttonY) == LOW || digitalRead(buttonG) == LOW || digitalRead(buttonR) == LOW) && fase == 4 && status == 1) {
-    digitalWrite(ledB, HIGH);
-    digitalWrite(ledG, HIGH);
-    digitalWrite(ledY, HIGH);
-    digitalWrite(ledR, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    digitalWrite(ledG, LOW);
-    digitalWrite(ledY, LOW);
-    digitalWrite(ledR, LOW);
-    status = 0;
-    fase = 1;
-  }
-  // IF para checar se o botão pressionado foi o correto de acordo com a fase
-
-  if(digitalRead(buttonG) == LOW && fase == 4 && status == 2) {
-    digitalWrite(ledG, HIGH);
-    delay(300);
-    digitalWrite(ledG, LOW);
-    status = 3;
-    Serial.println(status);
-  }
-
-
-  // Se foi o botão errado, reiniciar o jogo
-
-    if ((digitalRead(buttonY) == LOW || digitalRead(buttonB) == LOW || digitalRead(buttonR) == LOW) && fase == 4 && status == 2) {
-    digitalWrite(ledB, HIGH);
-    digitalWrite(ledG, HIGH);
-    digitalWrite(ledY, HIGH);
-    digitalWrite(ledR, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    digitalWrite(ledG, LOW);
-    digitalWrite(ledY, LOW);
-    digitalWrite(ledR, LOW);
-    status = 0;
-    fase = 1;
-  }
-  // IF para checar se o botão pressionado foi o correto de acordo com a fase
-
-  if(digitalRead(buttonY) == LOW && fase == 4 && status == 3) {
-    digitalWrite(ledY, HIGH);
-    delay(300);
-    digitalWrite(ledY, LOW);
-    status = 7;
-  }
-
-
-  // Se foi o botão errado, reiniciar o jogo
-
-    if ((digitalRead(buttonG) == LOW || digitalRead(buttonB) == LOW || digitalRead(buttonR) == LOW) && fase == 4 && status == 3) {
-    digitalWrite(ledB, HIGH);
-    digitalWrite(ledG, HIGH);
-    digitalWrite(ledY, HIGH);
-    digitalWrite(ledR, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    digitalWrite(ledG, LOW);
-    digitalWrite(ledY, LOW);
-    digitalWrite(ledR, LOW);
-    status = 0;
-    fase = 1;
-  }
-  // IF para checar se o botão pressionado foi o correto de acordo com a fase
-
-  if(digitalRead(buttonR) == LOW && fase == 4 && status == 7) {
-    digitalWrite(ledR, HIGH);
-    delay(300);
-    digitalWrite(ledR, LOW);
-    delay(1000);
-    digitalWrite(ledB, HIGH);
-    digitalWrite(ledG, HIGH);
-    digitalWrite(ledY, HIGH);
-    digitalWrite(ledR, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    digitalWrite(ledG, LOW);
-    digitalWrite(ledY, LOW);
-    digitalWrite(ledR, LOW);
-    delay(1000);
-    digitalWrite(ledB, HIGH);
-    digitalWrite(ledG, HIGH);
-    digitalWrite(ledY, HIGH);
-    digitalWrite(ledR, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    digitalWrite(ledG, LOW);
-    digitalWrite(ledY, LOW);
-    digitalWrite(ledR, LOW);
-    Serial.println("Acabou");
-    status = 5;
-  }
-
-
-  // Se foi o botão errado, reiniciar o jogo
-
-    if ((digitalRead(buttonG) == LOW || digitalRead(buttonB) == LOW || digitalRead(buttonY) == LOW) && fase == 4 && status == 7) {
-    digitalWrite(ledB, HIGH);
-    digitalWrite(ledG, HIGH);
-    digitalWrite(ledY, HIGH);
-    digitalWrite(ledR, HIGH);
-    delay(300);
-    digitalWrite(ledB, LOW);
-    digitalWrite(ledG, LOW);
-    digitalWrite(ledY, LOW);
-    digitalWrite(ledR, LOW);
-    status = 0;
-    fase = 1;
-  }
-
-// IF para, caso o jogador queira, pode recomeçar o jogo a qualquer momento caso clique no botão de restart.
-  if(digitalRead(buttonStart) == LOW && fase !=1) {
-    fase = 1;
-    status = 0;
-  }
+digitalWrite(16, LOW);
+digitalWrite(17,  LOW);
+digitalWrite(18, LOW);
+digitalWrite(19, LOW);
 
 }
 
+void loop()
+{
 
-void storeButtonPress(int button) {
-  buttonPresses[currentIndex] = button;
-  currentIndex++;
-  if (currentIndex == 4) {
-    // If the buffer is full, reset currentIndex to 0
-    currentIndex = 0;
-  }
 
-  // Print the current state of the buffer
-  Serial.print("Buffer = {");
-  for (int i = 0; i < 4; i++) {
-    Serial.print(buttonPresses[i]);
-    if (i < 3) {
-      Serial.print(", ");
-    }
-  }
-  Serial.println("}");
+if(digitalRead(22) == LOW && level == 1){
+  show_sequence();
+  get_sequence();
+  
+}
+
+if  (level == 1)
+generate_sequence();//generate a sequence;
+
+if (level != 1) //If start button is pressed or you're winning
+{
+show_sequence();    //show the sequence
+get_sequence();     //wait for your sequence
+}
+}
+
+void  show_sequence()
+{
+digitalWrite(16, LOW);
+digitalWrite(17,  LOW);
+digitalWrite(18, LOW);
+digitalWrite(19, LOW);
+
+
+
+for (int i = 0; i < level; i++)
+{
+digitalWrite(sequence[i],  HIGH);
+delay(velocity);
+digitalWrite(sequence[i], LOW);
+delay(200);
+}
+}
+
+void  get_sequence()
+{
+int flag = 0; //this flag indicates if the sequence is correct
+
+
+for  (int i = 0; i < level; i++)
+{
+flag = 0;
+while(flag == 0)
+{
+if (digitalRead(23)  == LOW)
+{
+digitalWrite(16, HIGH);
+your_sequence[i] = 16;
+flag = 1;
+delay(200);
+if  (your_sequence[i] != sequence[i])
+{
+wrong_sequence();
+return;
+}
+
+digitalWrite(16,  LOW);
+}
+
+if (digitalRead(4) == LOW)
+{
+digitalWrite(17, HIGH);
+your_sequence[i]  = 17;
+flag = 1;
+delay(200);
+if (your_sequence[i] != sequence[i])
+{
+wrong_sequence();
+return;
+}
+digitalWrite(17,  LOW);
+}
+
+if (digitalRead(15) == LOW)
+{
+digitalWrite(18, HIGH);
+your_sequence[i]  = 18;
+flag = 1;
+delay(200);
+if (your_sequence[i] != sequence[i])
+{
+wrong_sequence();
+return;
+}
+digitalWrite(18,  LOW);
+}
+
+if (digitalRead(13) == LOW)
+{
+digitalWrite(19, HIGH);
+your_sequence[i]  = 19;
+flag = 1;
+delay(200);
+if (your_sequence[i] != sequence[i])
+{
+wrong_sequence();
+return;
+}
+digitalWrite(19,  LOW);
+}
+
+if (digitalRead(22) == LOW)
+{
+your_sequence[i]  = 22;
+flag = 1;
+delay(200);
+if (your_sequence[i] != sequence[i])
+{
+wrong_sequence();
+return;
+}
+digitalWrite(30,  LOW);
+}
+
+}
+}
+right_sequence();
+}
+
+void generate_sequence()
+{
+randomSeed(millis());  //in this way is really random!!!
+
+for (int i = 0; i < MAX_LEVEL; i++)
+{
+sequence[i]  = random(16,20);
+}
+}
+void wrong_sequence()
+{
+for (int i = 0; i < 3;  i++)
+{
+digitalWrite(16, HIGH);
+digitalWrite(17,  HIGH);
+digitalWrite(18, HIGH);
+digitalWrite(19, HIGH);
+delay(250);
+digitalWrite(16, LOW);
+digitalWrite(17,  LOW);
+digitalWrite(18, LOW);
+digitalWrite(19, LOW);
+delay(250);
+}
+level  = 1;
+velocity = 1000;
+}
+
+void right_sequence()
+{
+digitalWrite(16, LOW);
+digitalWrite(17,  LOW);
+digitalWrite(18, LOW);
+digitalWrite(19, LOW);
+delay(250);
+
+digitalWrite(16, HIGH);
+digitalWrite(17,  HIGH);
+digitalWrite(18, HIGH);
+digitalWrite(19, HIGH);
+delay(500);
+digitalWrite(16, LOW);
+digitalWrite(17,  LOW);
+digitalWrite(18, LOW);
+digitalWrite(19, LOW);
+delay(500);
+
+if  (level < MAX_LEVEL);
+level++;
+
+velocity -= 50; //increase difficulty
 }
